@@ -1,8 +1,11 @@
 import routers from './router/routers'
 import { RouterProvider } from 'react-router-dom';
+import Auth from './components/AuthProvide'
 
 export default function app(){
     return (
-        <RouterProvider router = {routers} />
+        <Auth>
+            <RouterProvider router = {routers} />
+        </Auth>
     )
 }
