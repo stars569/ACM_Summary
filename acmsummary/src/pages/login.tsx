@@ -1,31 +1,42 @@
-import { login as loginAPI } from '../apis/login'
+import { loginAPI } from '../apis/users'
 import { useNavigate } from 'react-router-dom'
 import { Form, Input, Button } from 'antd'
 import { Notyf } from 'notyf';
-import { User } from '../utils/types'
+import { errorResponse, loginUser } from '../utils/types'
 import { useAuth } from '../components/AuthProvide'
 import 'notyf/notyf.min.css';
-import { loadToken, loadUser } from '../utils/localStorageOpt';
+import { AxiosError } from 'axios';
 
 export default function Login(){
-    const Navigate = useNavigate()
+    const navigate = useNavigate()
     const auth = useAuth()
-    const notify = new Notyf
+    const notify = new Notyf()
 
     //跳转到注册
     function handleNavigate(){
-        Navigate('/register')
+        navigate('/register')
     }
 
     //表单提交
-    function onFinish(formdata:User){
-        notify.success('正在登录...')
-        //之后在这里写向后端数据库请求登录的请求
+    async function onFinish(formdata:loginUser){
+        try{
+            const result = await loginAPI(formdata.username, formdata.password)
+            notify.success(result.message)
+            auth.loginFunction(result.user.username, result.token)
+            navigate('/')
+        }
+        catch(error){
+            const tsError = error as AxiosError
 
-
-        //这里使用用户密码是不安全的，前端的登录函数只起存token和提供用户名的作用，真正的验证在后端进行
-        auth.loginFunction(formdata.username, '1')
-        Navigate('/')
+            //检查服务端是否有响应
+            if(tsError.response){
+                const data = tsError.response?.data as errorResponse
+                notify.error(data.message) //有响应则返回错误信息
+            }
+            else{
+                notify.error('服务器未响应')
+            }
+        }
     }
     function onFinishFailed(){
         notify.error('用户名或密码不能为空')

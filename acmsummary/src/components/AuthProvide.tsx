@@ -24,10 +24,6 @@ export default function Auth( { children }: { children: ReactNode } ){
     //登录函数
     function loginFunction(username:string, newtoken:string){
         try{
-            //在这里进行jwt检测，看token是否合法
-
-
-
             const newuser:User = {
                 username:username,
             }
