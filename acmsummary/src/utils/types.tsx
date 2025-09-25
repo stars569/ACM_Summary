@@ -24,3 +24,8 @@ export type AuthInfo = {
 export type errorResponse = {
     message: string
 }
+
+export type SideBarProp = {
+    open: boolean,
+    setOpen: (open : boolean) => void
+}

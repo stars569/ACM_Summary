@@ -13,11 +13,6 @@ export default function Login(){
     const auth = useAuth()
     const notify = new Notyf()
 
-    //跳转到注册
-    function handleNavigate(){
-        navigate('/register')
-    }
-
     //表单提交
     async function onFinish(formdata:loginUser){
         try{

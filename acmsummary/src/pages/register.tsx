@@ -10,11 +10,6 @@ export default function Register(){
     const navigate = useNavigate()
     const notify = new Notyf()
 
-    //跳转到登录
-    function handleNavigate(){
-        navigate('/login')
-    }
-
     //表单提交
     async function onFinish(formdata:registerUser){
         if(formdata.password !== formdata.passwordConfirm){

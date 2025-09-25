@@ -18,6 +18,7 @@ export default function Auth( { children }: { children: ReactNode } ){
             setUser(localUser)
             setToken(localToken)
         }
+        
         loadInfo()
     }, [])
 
