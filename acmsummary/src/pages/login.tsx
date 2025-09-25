@@ -1,9 +1,10 @@
 import { loginAPI } from '../apis/users'
 import { useNavigate } from 'react-router-dom'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Card } from 'antd'
 import { Notyf } from 'notyf';
 import { errorResponse, loginUser } from '../utils/types'
 import { useAuth } from '../components/AuthProvide'
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import 'notyf/notyf.min.css';
 import { AxiosError } from 'axios';
 
@@ -43,41 +44,42 @@ export default function Login(){
     }
 
     return (
-        <div>
-            <div>this is login</div>
-            <Form
-                name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 600 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                autoComplete="off"
-            >
-                <Form.Item
-                label="用户名"
-                name="username"
-                rules={[{ required: true, message: 'Please input your username!' }]}
-                >
-                <Input />
-                </Form.Item>
+        <div className = "flex items-center justify-around bg-gradient-to-b from-purple-600 to-blue-100 text-lg h-screen bg-cover bg-no-repeat">
+            <div className = "items-center">
+                <Card title = "ACM-Platform Login" className = "w-[500px] h-[300px] text-center space-y-5 shadow-2xl hover:ring-2">
+                    <Form
+                        name="basic"
+                        labelCol={{ span: 0 }}
+                        wrapperCol={{ span: 24 }}
+                        style={{ maxWidth: 500 }}
+                        initialValues={{ remember: true }}
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
+                        autoComplete="off"
+                    >
+                        <Form.Item
+                        name="username"
+                        rules={[{ required: true, message: 'Please input your username!' }]}
+                        >
+                        <Input prefix = {<UserOutlined/>} placeholder='username'/>
+                        </Form.Item>
 
-                <Form.Item
-                label="密码"
-                name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                <Input.Password />
-                </Form.Item>
+                        <Form.Item
+                        name="password"
+                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        >
+                        <Input.Password prefix = {<LockOutlined/>} placeholder='password'/>
+                        </Form.Item>
 
-                <Form.Item label={null}>
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-                </Form.Item>
-            </Form>
-            <div onClick = {handleNavigate}>to register</div>
+                        <Form.Item label={null}>
+                        <Button type="primary" htmlType="submit" className = "active:bg-blue-800 active:scale-90">
+                            登录
+                        </Button>
+                        </Form.Item>
+                        <a href = "/register" className = "hover:underline">Register now!</a>
+                    </Form>
+                </Card>
+            </div>
         </div>
     )
 }

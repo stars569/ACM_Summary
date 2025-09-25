@@ -1,4 +1,4 @@
-import { User, AuthInfo } from './types'
+import { User } from './types'
 
 function loadUser(): User | null{
     try{

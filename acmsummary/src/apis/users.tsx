@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 
 //登录api
 async function loginAPI(username:string, password:string){
