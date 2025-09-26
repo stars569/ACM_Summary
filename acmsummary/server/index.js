@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
-const { router } = require('./router')
-const { initDB } = require('./database')
+const { router, auth } = require('./router')
+const { initDB, db } = require('./database')
 
 const app = express()
 
@@ -17,6 +17,21 @@ app.use(express.urlencoded({ extended: false }))
 
 //配置路由组件
 app.use('/server', router)
+
+//添加题目信息
+app.post('/api/add', auth, async (req, res) => {
+    try{
+        const data = req.body.data
+        const checkName = await db.checkQuestionExistByTitle(data.title)
+        if(checkName)return res.status(401).json({ message: '该题目与已有题目重名' })
+        const result = await db.addSolvedQuestion(data)
+        res.status(201).json({ message: '上传题目成功', info: result })
+    }
+    catch(error){
+        console.log('上传失败:', error)
+        res.status(500).json({ message: '数据库未响应' })
+    }
+})
 
 //启动服务器
 app.listen(8080, ()=>{

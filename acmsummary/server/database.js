@@ -21,6 +21,17 @@ async function initDB(){
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     `)
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS history (
+            id SERIAL PRIMARY KEY,
+            type VARCHAR(50) NOT NULL,
+            title VARCHAR(255) UNIQUE NOT NULL,
+            difficulty INTEGER,
+            solveTime TIMESTAMP,
+            uploadTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `)
 }
 
 //数据库操作函数
@@ -36,6 +47,21 @@ const db = {
         const res = await pool.query(`
             INSERT INTO users (username, password, role) VALUES ($1, $2, $3)
         `, [username, password, role])
+        return res.rows[0]
+    },
+
+    async addSolvedQuestion(data){
+        const res = await pool.query(`
+            INSERT INTO history (type, title, difficulty, solveTime) VALUES ($1, $2, $3, $4)
+        `, [data.type, data.title, data.difficulty, data.solveTime])
+        console.log(data)
+        return res.rows[0]
+    },
+
+    async checkQuestionExistByTitle(title){
+        const res = await pool.query(`
+            SELECT * FROM history WHERE title = $1
+        `, [title])
         return res.rows[0]
     }
 }

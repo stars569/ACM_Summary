@@ -1,8 +1,7 @@
-import { Home, Bolt, ChevronRight } from 'lucide-react'
+import { Home, Bolt, ChevronRight, CirclePlus } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { strCombine } from '../utils/strHandle'
 import { SideBarProp } from '../utils/types'
-import { useState } from 'react'
 
 export default function SideBar(prop:SideBarProp){
 
@@ -23,6 +22,11 @@ export default function SideBar(prop:SideBarProp){
             path:'/',
             icon:<Home />,
             description:'Home'
+        },
+        {
+            path:'/add',
+            icon:<CirclePlus />,
+            description:'Add'
         },
         {
             path:'/settings',

@@ -29,3 +29,21 @@ export type SideBarProp = {
     open: boolean,
     setOpen: (open : boolean) => void
 }
+
+export type DateStr = {
+    $d: string
+}
+
+export type questionInfo = {
+    type: string,
+    difficulty: number,
+    title: string,
+    solveTime: DateStr
+}
+
+export type questionInfoSubmit = {
+    type: string,
+    difficulty: number,
+    title: string,
+    solveTime: string
+}

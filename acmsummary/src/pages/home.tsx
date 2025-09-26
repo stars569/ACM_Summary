@@ -1,18 +1,13 @@
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../components/AuthProvide'
+import { Card } from 'antd'
 
 export default function Home(){
-    const auth = useAuth()
-    const navigate = useNavigate()
-
-    function handleClick(){
-        auth.logoutFunction()
-    }
 
     return (
         <div>
-            <div>this is home</div>
-            <button onClick = {handleClick}>Click to logout</button>
+            <h1 className = 'text-4xl text-center font-light'>Welcome to ACMsummary!</h1>
+            <Card className = 'fixed'>
+                总做题数:
+            </Card>
         </div>
     )
 }

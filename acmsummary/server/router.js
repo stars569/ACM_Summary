@@ -61,7 +61,7 @@ router.post('/register', async (req, res) => {
 
 //认证中间件
 function auth(req, res, next){
-    const header = req.header['auth']
+    const header = req.headers['authorization']
     const jwtToken = header && header.split(' ')[1]
     if(!jwtToken)return res.status(401).json({ message: '未提供令牌' })
     jwt.verify(jwtToken, config.jwtToken, (err, user) => {
@@ -69,7 +69,7 @@ function auth(req, res, next){
             console.log('令牌失效:', err)
             return res.status(401).json({ message: 'jwt失效' })
         }
-        res.user = user
+        req.user = user
         next()
     })
 }
