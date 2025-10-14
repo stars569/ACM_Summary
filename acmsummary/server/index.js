@@ -28,8 +28,18 @@ app.post('/api/add', auth, async (req, res) => {
         res.status(201).json({ message: '上传题目成功', info: result })
     }
     catch(error){
-        console.log('上传失败:', error)
         res.status(500).json({ message: '数据库未响应' })
+    }
+})
+
+//获取题目信息
+app.get('/api/question', auth, async (req, res) => {
+    try{
+        const result = await db.getQuestionData()
+        res.status(201).json({ message:'获取历史上传记录成功', data:result })
+    }
+    catch(error){
+        res.status(500).json({ message:'数据库未响应' })
     }
 })
 

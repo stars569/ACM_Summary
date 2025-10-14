@@ -47,3 +47,12 @@ export type questionInfoSubmit = {
     title: string,
     solveTime: string
 }
+
+export type questionDataFeedback = {
+    id: number,
+    type: string,
+    difficulty: number,
+    title: string,
+    solvetime: string,
+    uploadtime: string
+}

@@ -63,6 +63,13 @@ const db = {
             SELECT * FROM history WHERE title = $1
         `, [title])
         return res.rows[0]
+    },
+
+    async getQuestionData(){
+        const res = pool.query(`
+            SELECT * FROM history
+        `)
+        return res
     }
 }
 

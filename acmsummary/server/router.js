@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign(
             { id: checkUser.id, username: checkUser.username },
             config.jwtToken,
-            { expiresIn: '1h' }
+            { expiresIn: '10h' }
         )
 
         const response = {

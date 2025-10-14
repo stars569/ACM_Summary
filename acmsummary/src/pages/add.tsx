@@ -1,12 +1,15 @@
-import { Form, Input, Button, Card, Cascader, DatePicker } from 'antd'
-import { questionInfo } from '../utils/types'
+import React from 'react'
+import { Form, Input, Button, Card, Cascader, DatePicker, Divider, Typography, List } from 'antd'
+import { questionDataFeedback, questionInfo } from '../utils/types'
 import { Notyf } from 'notyf'
 import FormItem from 'antd/es/form/FormItem'
 import { useAuth } from '../components/AuthProvide'
-import { uploadQuestion } from '../apis/questions'
+import { getQuestionData, uploadQuestion } from '../apis/questions'
 import { useNavigate } from 'react-router-dom'
 import { AxiosError } from 'axios'
 import { errorResponse } from '../utils/types'
+import { useEffect, useState } from 'react'
+import { strCombine, strExtract } from '../utils/strHandle'
 
 export default function AddPage(){
 
@@ -16,6 +19,9 @@ export default function AddPage(){
 
     const auth = useAuth()
 
+    const [historyData, setHistoryData] = useState<questionDataFeedback[] | undefined>(undefined)
+
+    //表单提交
     async function onFinish(formdata:questionInfo){
         if(formdata.difficulty % 100 !== 0 || formdata.difficulty < 800 || formdata.difficulty > 3300){
             notify.error('Please type in right difficulty')
@@ -28,7 +34,6 @@ export default function AddPage(){
         try{
             const result = await uploadQuestion(formattedData, auth.token)
             notify.success(result.message)
-            navigate('/add')
         }
         catch(error){
             const tsError = error as AxiosError
@@ -42,10 +47,46 @@ export default function AddPage(){
                 notify.error('服务器未响应')
             }
         }
+        try{
+            const result = await getQuestionData(auth.token)
+            setHistoryData(result.data.rows)
+        }
+        catch(error){
+            const tsError = error as AxiosError
+                if(tsError.response){
+                    const data = tsError.response.data as errorResponse
+                    notify.error(data.message)
+                }
+                else{
+                    notify.error('获取数据失败')
+                }
+        }
     }
     function onFinishFailed(){
-
+        notify.error('提交失败')
     }
+
+    //获取历史数据
+    useEffect(() => {
+        async function getHistoryData(){
+            try{
+                const result = await getQuestionData(auth.token)
+                setHistoryData(result.data.rows)
+            }
+            catch(error){
+                const tsError = error as AxiosError
+                if(tsError.response){
+                    const data = tsError.response.data as errorResponse
+                    notify.error(data.message)
+                }
+                else{
+                    notify.error('获取数据失败')
+                }
+            }
+        }
+        getHistoryData()
+    }, [])
+
     return (
         <div>
             <Card>
@@ -61,9 +102,9 @@ export default function AddPage(){
                 >
                     <Form.Item
                     name="title"
-                    rules={[{ required: true, message: 'Please input question title!' }]}
+                    rules={[{ required: true, message: '请输入题目标题!' }]}
                     >
-                    <Input placeholder='title'/>
+                    <Input placeholder='题目标题'/>
                     </Form.Item>
 
                     <Form.Item
@@ -72,7 +113,7 @@ export default function AddPage(){
                     name = 'type'
                     >
                     <Cascader
-                    placeholder = 'algorithm'
+                    placeholder = '算法'
                     options={[
                         {
                             value: '算法基础',
@@ -141,15 +182,15 @@ export default function AddPage(){
 
                     <Form.Item
                     label="difficulty"
-                    rules = {[{ required: true, message: 'Please input difficulty of the question' }]}
+                    rules = {[{ required: true, message: '请输入问题难度!' }]}
                     name = "difficulty"
                     >
-                    <Input placeholder='difficulty in codeforces' />
+                    <Input placeholder='codeforces难度' />
                     </Form.Item>
 
                     <FormItem
                     label = "solveTime"
-                    rules = {[{ required: true, message: 'Please choose a date' }]}
+                    rules = {[{ required: true, message: '请选择完成日期!' }]}
                     name = "solveTime"
                     >
                     <DatePicker />
@@ -160,6 +201,22 @@ export default function AddPage(){
                     </Button>
                     </Form.Item>
                 </Form>
+            </Card>
+            <Card>
+                <div className="text-lg">历史记录</div>
+                <List
+                    pagination={{ position:'bottom', align:'center', pageSize: 5 }}
+                    dataSource={historyData}
+                    renderItem={(item, index) => (
+                    <List.Item>
+                        <List.Item.Meta
+                        title={<a href="https://oi-wiki.org/">{strExtract(item.type)}</a>}
+                        description={item.title}
+                        />
+                        <div>难度:{item.difficulty}</div>
+                    </List.Item>
+                    )}
+                />
             </Card>
         </div>
     )
