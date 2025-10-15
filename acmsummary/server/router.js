@@ -66,7 +66,6 @@ function auth(req, res, next){
     if(!jwtToken)return res.status(401).json({ message: '未提供令牌' })
     jwt.verify(jwtToken, config.jwtToken, (err, user) => {
         if(err){
-            console.log('令牌失效:', err)
             return res.status(401).json({ message: 'jwt失效' })
         }
         req.user = user

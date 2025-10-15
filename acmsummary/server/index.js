@@ -43,6 +43,18 @@ app.get('/api/question', auth, async (req, res) => {
     }
 })
 
+//删除题目信息
+app.delete('/api/delete/:id', auth, async (req, res) => {
+    try{
+        const result = await db.deleteQuestionDataById(req.params.id)
+        res.status(201).json({ message:'成功删除指定题目', data:result })
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({ message:'数据库未响应' })
+    }
+})
+
 //启动服务器
 app.listen(8080, ()=>{
     console.log("server is running on port 8080")

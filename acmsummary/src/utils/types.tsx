@@ -56,3 +56,14 @@ export type questionDataFeedback = {
     solvetime: string,
     uploadtime: string
 }
+
+export type linearChartDataType = {
+    name: string,
+    pv: number,
+    amt: number
+}
+
+export type linearChartData = {
+    ave: linearChartDataType[],
+    count: linearChartDataType[]
+}

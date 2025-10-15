@@ -34,3 +34,19 @@ export async function getQuestionData(token:string | null){
         throw error
     }
 }
+
+//根据id删除指定题目
+export async function deleteQuestionAPI(id: number, token: string | null){
+    try{
+        const result = await axios.delete(`http://localhost:8080/api/delete/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            }
+        })
+        return result.data
+    }
+    catch(error){
+        throw error
+    }
+}

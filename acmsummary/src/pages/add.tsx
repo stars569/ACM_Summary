@@ -4,9 +4,9 @@ import { questionDataFeedback, questionInfo } from '../utils/types'
 import { Notyf } from 'notyf'
 import FormItem from 'antd/es/form/FormItem'
 import { useAuth } from '../components/AuthProvide'
-import { getQuestionData, uploadQuestion } from '../apis/questions'
+import { getQuestionData, uploadQuestion, deleteQuestionAPI } from '../apis/questions'
 import { useNavigate } from 'react-router-dom'
-import { AxiosError } from 'axios'
+import { Axios, AxiosError } from 'axios'
 import { errorResponse } from '../utils/types'
 import { useEffect, useState } from 'react'
 import { strCombine, strExtract } from '../utils/strHandle'
@@ -20,6 +20,26 @@ export default function AddPage(){
     const auth = useAuth()
 
     const [historyData, setHistoryData] = useState<questionDataFeedback[] | undefined>(undefined)
+
+    //封装获取历史数据函数
+    async function setHistoryDataFunction(){
+        try{
+            const result = await getQuestionData(auth.token)
+            const resultData: questionDataFeedback[] = result.data.rows
+            resultData.sort((a, b) => new Date(b.uploadtime).getTime() - new Date(a.uploadtime).getTime())
+            setHistoryData(resultData)
+        }
+        catch(error){
+            const tsError = error as AxiosError
+                if(tsError.response){
+                    const data = tsError.response.data as errorResponse
+                    notify.error(data.message)
+                }
+                else{
+                    notify.error('获取数据失败')
+                }
+        }
+    }
 
     //表单提交
     async function onFinish(formdata:questionInfo){
@@ -47,20 +67,7 @@ export default function AddPage(){
                 notify.error('服务器未响应')
             }
         }
-        try{
-            const result = await getQuestionData(auth.token)
-            setHistoryData(result.data.rows)
-        }
-        catch(error){
-            const tsError = error as AxiosError
-                if(tsError.response){
-                    const data = tsError.response.data as errorResponse
-                    notify.error(data.message)
-                }
-                else{
-                    notify.error('获取数据失败')
-                }
-        }
+        setHistoryDataFunction()
     }
     function onFinishFailed(){
         notify.error('提交失败')
@@ -68,24 +75,28 @@ export default function AddPage(){
 
     //获取历史数据
     useEffect(() => {
-        async function getHistoryData(){
-            try{
-                const result = await getQuestionData(auth.token)
-                setHistoryData(result.data.rows)
-            }
-            catch(error){
-                const tsError = error as AxiosError
-                if(tsError.response){
-                    const data = tsError.response.data as errorResponse
-                    notify.error(data.message)
-                }
-                else{
-                    notify.error('获取数据失败')
-                }
-            }
-        }
-        getHistoryData()
+        setHistoryDataFunction()
     }, [])
+
+    //点击删除问题
+    async function deleteQuestion(id: number){
+        try{
+            const result = await deleteQuestionAPI(id, auth.token)
+            notify.success('删除成功')
+        }
+        catch(error){
+            const tsError = error as AxiosError
+            if(tsError.response){
+                const data = tsError.response.data as errorResponse
+                notify.error(data.message)
+            }
+            else{
+                notify.error('删除失败')
+            }
+            console.log(error)
+        }
+        setHistoryDataFunction()
+    }
 
     return (
         <div>
@@ -214,6 +225,7 @@ export default function AddPage(){
                         description={item.title}
                         />
                         <div>难度:{item.difficulty}</div>
+                        <Button className='active:bg-blue-800' onClick={() => deleteQuestion(item.id)}>删除</Button>
                     </List.Item>
                     )}
                 />

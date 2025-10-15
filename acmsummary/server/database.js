@@ -54,7 +54,6 @@ const db = {
         const res = await pool.query(`
             INSERT INTO history (type, title, difficulty, solveTime) VALUES ($1, $2, $3, $4)
         `, [data.type, data.title, data.difficulty, data.solveTime])
-        console.log(data)
         return res.rows[0]
     },
 
@@ -66,9 +65,16 @@ const db = {
     },
 
     async getQuestionData(){
-        const res = pool.query(`
+        const res = await pool.query(`
             SELECT * FROM history
         `)
+        return res
+    },
+
+    async deleteQuestionDataById(id){
+        const res = await pool.query(`
+            DELETE FROM history WHERE id = $1
+        `, [id])
         return res
     }
 }

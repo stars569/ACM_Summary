@@ -1,3 +1,4 @@
+import React from 'react'
 import { Home, Bolt, ChevronRight, CirclePlus } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { strCombine } from '../utils/strHandle'
