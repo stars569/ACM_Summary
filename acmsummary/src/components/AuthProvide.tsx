@@ -1,6 +1,6 @@
 import React from 'react'
 import { ReactNode, useState, createContext, useEffect, useContext } from 'react'
-import { loadUser, loadToken } from '../utils/localStorageOpt'
+import { loadUser, loadToken, loadUserId } from '../utils/localStorageOpt'
 import { User, AuthInfo } from '../utils/types'
 
 const Authorized = createContext<undefined | AuthInfo>(undefined)
@@ -24,10 +24,11 @@ export default function Auth( { children }: { children: ReactNode } ){
     }, [])
 
     //登录函数
-    function loginFunction(username:string, newtoken:string){
+    function loginFunction(username:string, userId:number, newtoken:string){
         try{
             const newuser:User = {
                 username:username,
+                userId:userId
             }
 
             localStorage.setItem('user', JSON.stringify(newuser))

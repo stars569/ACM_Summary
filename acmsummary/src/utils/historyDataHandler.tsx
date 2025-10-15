@@ -1,6 +1,7 @@
 import { linearChartData, linearChartDataType, questionDataFeedback } from "./types";
 
 export function getChart(data: questionDataFeedback[]): linearChartData{
+    if(data.length === 0)return {ave: [], count: []}
     data.sort((a,b) => new Date(a.solvetime).getTime() - new Date(b.solvetime).getTime())
     const res: linearChartData = {
         ave: [],
@@ -15,12 +16,12 @@ export function getChart(data: questionDataFeedback[]): linearChartData{
         const newDate = new Date(data[i].solvetime).getTime()
         if(date != newDate){
             const dataAve: linearChartDataType = {
-                name: new Date(data[i].solvetime).toLocaleDateString(),
+                name: new Date(data[i - 1].solvetime).toLocaleDateString(),
                 pv: 1.0 * totalDiff / count,
                 amt: 0
             }
             const datacount: linearChartDataType = {
-                name: new Date(data[i].solvetime).toLocaleDateString(),
+                name: new Date(data[i - 1].solvetime).toLocaleDateString(),
                 pv: count,
                 amt: 0
             }
@@ -35,6 +36,18 @@ export function getChart(data: questionDataFeedback[]): linearChartData{
             totalDiff += data[i].difficulty
         }
     }
+    const dataAve:linearChartDataType = {
+        name: new Date(data[data.length - 1]?.solvetime).toLocaleDateString(),
+        pv: totalDiff / count,
+        amt: 0
+    }
+    const datacount:linearChartDataType = {
+        name: new Date(data[data.length - 1]?.solvetime).toLocaleDateString(),
+        pv: count,
+        amt: 0
+    }
+    aveData.push(dataAve)
+    countData.push(datacount)
     res.ave = aveData
     res.count = countData
     return res

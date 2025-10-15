@@ -24,7 +24,11 @@ export default function Home(){
     useEffect(() => {
         async function getHistoryData(){
             try{
-                const result = await getQuestionData(auth.token)
+                if(auth.user === null || auth.user.userId === null){
+                    notify.error('获取用户信息失败')
+                    return
+                }
+                const result = await getQuestionData(auth.user.userId, auth.token)
                 setQuestionData(result.data.rows)
             }
             catch(error){

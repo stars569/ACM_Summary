@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { changePasswordData } from '../utils/types'
 
 //登录api
 async function loginAPI(username:string, password:string){
@@ -36,7 +37,45 @@ async function registerAPI(username:string, password:string){
     }
 }
 
+//注销api
+async function deleteUserAPI(userId: number, token: string | null){
+    try{
+        const res = await axios.delete(`http://localhost:8080/server/delete/${userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            }
+        })
+        return res.data
+    }
+    catch(error){
+        throw error
+    }
+}
+
+//更改密码api
+async function changePasswordAPI(data: changePasswordData, userId: number, token: string | null){
+    try{
+        const res = await axios.post('http://localhost:8080/server/change', {
+            oldPassword: data.oldPassword,
+            newPassword: data.newPassword,
+            id: userId
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            }
+        })
+        return res.data
+    }
+    catch(error){
+        throw error
+    }
+}
+
 export {
     loginAPI,
-    registerAPI
+    registerAPI,
+    deleteUserAPI,
+    changePasswordAPI
 }

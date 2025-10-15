@@ -20,9 +20,9 @@ export async function uploadQuestion(data:questionInfoSubmit, token:string | nul
 }
 
 //获取所有题目数据
-export async function getQuestionData(token:string | null){
+export async function getQuestionData(userId: number, token:string | null){
     try{
-        const result = await axios.get('http://localhost:8080/api/question', {
+        const result = await axios.get(`http://localhost:8080/api/question/${userId}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'authorization': 'Bearer ' + token
@@ -36,9 +36,9 @@ export async function getQuestionData(token:string | null){
 }
 
 //根据id删除指定题目
-export async function deleteQuestionAPI(id: number, token: string | null){
+export async function deleteQuestionAPI(id: number, userId:number, token: string | null){
     try{
-        const result = await axios.delete(`http://localhost:8080/api/delete/${id}`, {
+        const result = await axios.delete(`http://localhost:8080/api/delete/${id}/${userId}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'authorization': 'Bearer ' + token

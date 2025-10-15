@@ -24,7 +24,8 @@ router.post('/login', async (req, res) => {
         )
 
         const response = {
-            username: username
+            username: username,
+            userId: checkUser.id
         }
 
         res.status(200).json({ message:'登录成功', user:response, token:token})
@@ -48,7 +49,7 @@ router.post('/register', async (req, res) => {
         console.log('新用户:', newUser)
 
         const response = {
-            username: newUser.username,
+            username: newUser?.username,
         }
 
         res.status(200).json({ message:'注册成功', user:response })
@@ -56,6 +57,40 @@ router.post('/register', async (req, res) => {
     catch(error){
         console.log('注册失败:', error)
         res.status(500).json({ message: '注册失败' })
+    }
+})
+
+//注销账号
+router.delete('/delete/:id', auth, async (req, res) => { 
+    try{
+        const result = await db.deleteUserById(req.params.id)
+        console.log('删除用户:', result)
+        res.status(200).json({ message:'注销成功' })
+    }
+    catch(error){
+        console.log('注销失败:', error)
+        res.status(500).json({ message: '注销失败' })
+    }
+})
+
+//更改密码
+router.post('/change', auth, async (req, res) => {
+    try{
+        const data = req.body
+        const result = await db.getPasswordById(data.id)
+        if(result === null){
+            res.status(404).json({ message:'用户不存在' })
+        }
+        const comfirm = bcrypt.compare(data.oldPassword, result.password)
+        if(!comfirm){
+            res.status(401).json({ message:'密码错误' })
+        }
+        const newPassword = await bcrypt.hash(data.newPassword, 10)
+        const changeRes = await db.changePassword(data.id, newPassword)
+        res.status(201).json({ message:'密码修改成功', info: changeRes })
+    }
+    catch(error){
+        res.status(500).json({ message:'数据库未响应' })
     }
 })
 

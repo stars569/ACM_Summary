@@ -1,5 +1,6 @@
 export type User = {
     username: string
+    userId: number
 }
 
 export type loginUser = {
@@ -17,7 +18,7 @@ export type AuthInfo = {
     user: User | null,
     token: string | null,
     isAuthorized: boolean,
-    loginFunction: (username:string, newtoken:string) => void,
+    loginFunction: (username:string, userId:number, newtoken:string) => void,
     logoutFunction: () => void
 }
 
@@ -45,7 +46,8 @@ export type questionInfoSubmit = {
     type: string,
     difficulty: number,
     title: string,
-    solveTime: string
+    solveTime: string,
+    userId: number
 }
 
 export type questionDataFeedback = {
@@ -66,4 +68,9 @@ export type linearChartDataType = {
 export type linearChartData = {
     ave: linearChartDataType[],
     count: linearChartDataType[]
+}
+
+export type changePasswordData = {
+    oldPassword: string,
+    newPassword: string
 }

@@ -24,7 +24,11 @@ export default function AddPage(){
     //封装获取历史数据函数
     async function setHistoryDataFunction(){
         try{
-            const result = await getQuestionData(auth.token)
+            if(auth.user === null || auth.user.userId === null){
+                notify.error('获取用户信息失败')
+                return 
+            }
+            const result = await getQuestionData(auth.user.userId, auth.token)
             const resultData: questionDataFeedback[] = result.data.rows
             resultData.sort((a, b) => new Date(b.uploadtime).getTime() - new Date(a.uploadtime).getTime())
             setHistoryData(resultData)
@@ -47,9 +51,14 @@ export default function AddPage(){
             notify.error('Please type in right difficulty')
             return 
         }
+        if(auth.user === null || auth.user.userId === null){
+            notify.error('获取用户信息失败')
+            return
+        }
         const formattedData = {
             ...formdata,
-            'solveTime': formdata.solveTime.$d
+            solveTime: formdata?.solveTime.$d,
+            userId: auth.user.userId
         }
         try{
             const result = await uploadQuestion(formattedData, auth.token)
@@ -81,7 +90,11 @@ export default function AddPage(){
     //点击删除问题
     async function deleteQuestion(id: number){
         try{
-            const result = await deleteQuestionAPI(id, auth.token)
+            if(auth.user === null || auth.user.userId === null){
+                notify.error('获取用户信息失败')
+                return
+            }
+            const result = await deleteQuestionAPI(id, auth.user.userId, auth.token)
             notify.success('删除成功')
         }
         catch(error){

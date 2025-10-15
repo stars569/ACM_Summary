@@ -19,7 +19,7 @@ export default function Login(){
         try{
             const result = await loginAPI(formdata.username, formdata.password)
             notify.success(result.message)
-            auth.loginFunction(result.user.username, result.token)
+            auth.loginFunction(result.user.username, result.user.userId, result.token)
             navigate('/')
         }
         catch(error){
@@ -27,7 +27,7 @@ export default function Login(){
 
             //检查服务端是否有响应
             if(tsError.response){
-                const data = tsError.response?.data as errorResponse
+                const data = tsError.response.data as errorResponse
                 notify.error(data.message) //有响应则返回错误信息
             }
             else{

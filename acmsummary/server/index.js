@@ -22,7 +22,7 @@ app.use('/server', router)
 app.post('/api/add', auth, async (req, res) => {
     try{
         const data = req.body.data
-        const checkName = await db.checkQuestionExistByTitle(data.title)
+        const checkName = await db.checkQuestionExistById(data.id, data.userId)
         if(checkName)return res.status(401).json({ message: '该题目与已有题目重名' })
         const result = await db.addSolvedQuestion(data)
         res.status(201).json({ message: '上传题目成功', info: result })
@@ -33,9 +33,9 @@ app.post('/api/add', auth, async (req, res) => {
 })
 
 //获取题目信息
-app.get('/api/question', auth, async (req, res) => {
+app.get('/api/question/:userId', auth, async (req, res) => {
     try{
-        const result = await db.getQuestionData()
+        const result = await db.getQuestionData(req.params.userId)
         res.status(201).json({ message:'获取历史上传记录成功', data:result })
     }
     catch(error){
@@ -44,9 +44,9 @@ app.get('/api/question', auth, async (req, res) => {
 })
 
 //删除题目信息
-app.delete('/api/delete/:id', auth, async (req, res) => {
+app.delete('/api/delete/:id/:userId', auth, async (req, res) => {
     try{
-        const result = await db.deleteQuestionDataById(req.params.id)
+        const result = await db.deleteQuestionDataById(req.params.id, req.params.userId)
         res.status(201).json({ message:'成功删除指定题目', data:result })
     }
     catch(error){

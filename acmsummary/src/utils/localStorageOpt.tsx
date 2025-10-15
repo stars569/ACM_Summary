@@ -25,7 +25,20 @@ function loadToken(): string | null{
     }
 }
 
+function loadUserId(): number | null{
+    try{
+        const userId = localStorage.getItem('userId')
+        if(userId !== null || userId === undefined)return parseInt(userId)
+        else return null
+    }
+    catch(error){
+        console.log('读取用户id失败:', error)
+        return null
+    }
+}
+
 export {
     loadUser,
-    loadToken
+    loadToken,
+    loadUserId
 }
