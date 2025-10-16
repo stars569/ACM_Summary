@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../components/AuthProvide'
 import { deleteUserAPI, changePasswordAPI } from '../apis/users'
 import { Notyf } from 'notyf'
 import { AxiosError } from 'axios'
 import { changePasswordData, errorResponse } from '../utils/types'
-import { Form, Input, Button, Card } from 'antd'
+import { Form, Input, Button, Card, Modal } from 'antd'
 import { LockOutlined } from '@ant-design/icons';
 
 export default function Settings(){
@@ -12,9 +12,24 @@ export default function Settings(){
     const auth = useAuth()
 
     const notify = new Notyf()
+    
+    const [visible, setVisible] = useState(false)
+
+    async function handleOk(){
+        await handleDelete()
+        setVisible(false)
+    }
+
+    function handleCancel(){
+        setVisible(false)
+    }
 
     function handleLogOut(){
         auth.logoutFunction()
+    }
+
+    function handleUserDelete(){
+        setVisible(true)
     }
 
     async function handleDelete(){
@@ -66,14 +81,39 @@ export default function Settings(){
     }
 
     return (
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 bg-gray-50">
+            <Modal
+                title="确认"
+                closable={{ 'aria-label': 'Custom Close Button' }}
+                open={visible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+            >
+                <p>确定注销账户?</p>
+                <p>注销后不可找回</p>
+            </Modal>
             <Card title='设置' className="w-full">
                 <div className="flex space-x-4">
-                    <Card className='flex-col flex-1'>
-                        <Button onClick={handleLogOut}>退出登录</Button>
-                        <Button onClick={handleDelete}>注销账户</Button>
+                    <Card className='flex-col flex-1' title='账户操作'>
+                        <div className="flex flex-col space-y-4">
+                            <Button 
+                                onClick={handleLogOut} 
+                                size="large"
+                                className="flex items-center justify-center"
+                            >
+                                退出登录
+                            </Button>
+                            <Button 
+                                onClick={handleUserDelete} 
+                                size="large"
+                                danger
+                                className="flex items-center justify-center"
+                            >
+                                注销账户
+                            </Button>
+                        </div>
                     </Card>
-                    <Card className='flex-col flex-1'>
+                    <Card className='flex-col flex-1' title='修改密码'>
                         <Form
                             name="basic"
                             labelCol={{ span: 0 }}

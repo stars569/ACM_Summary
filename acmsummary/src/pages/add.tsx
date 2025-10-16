@@ -48,7 +48,7 @@ export default function AddPage(){
     //表单提交
     async function onFinish(formdata:questionInfo){
         if(formdata.difficulty % 100 !== 0 || formdata.difficulty < 800 || formdata.difficulty > 3300){
-            notify.error('Please type in right difficulty')
+            notify.error('请输入正确的难度(800-3300)')
             return 
         }
         if(auth.user === null || auth.user.userId === null){
@@ -112,8 +112,8 @@ export default function AddPage(){
     }
 
     return (
-        <div>
-            <Card>
+        <div className='bg-gray-50'>
+            <Card className='bg-gray-50'>
                 <Form
                     name="basic"
                     labelCol={{ span: 0 }}
@@ -226,7 +226,7 @@ export default function AddPage(){
                     </Form.Item>
                 </Form>
             </Card>
-            <Card>
+            <Card className='bg-gray-50'>
                 <div className="text-lg">历史记录</div>
                 <List
                     pagination={{ position:'bottom', align:'center', pageSize: 5 }}

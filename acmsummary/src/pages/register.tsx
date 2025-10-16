@@ -75,7 +75,7 @@ export default function Register(){
 
                     <Form.Item label={null}>
                     <Button type="primary" htmlType="submit" className = "active:bg-blue-800 active:scale-90">
-                        Submit
+                        注册
                     </Button>
                     </Form.Item>
                     <a href = "/login" className = "hover:underline">Login now</a>
