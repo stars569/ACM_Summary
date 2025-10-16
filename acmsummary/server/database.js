@@ -5,7 +5,7 @@ const config = require('./config')
 const pool = new Pool({
     user: config.DBusername,
     host: 'localhost',
-    database: 'ACM',
+    database: config.DBName,
     password: config.DBpassword,
     port: 5432,
 });
