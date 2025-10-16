@@ -52,3 +52,22 @@ export function getChart(data: questionDataFeedback[]): linearChartData{
     res.count = countData
     return res
 }
+
+export function cleanQuestionData(data: questionDataFeedback[], difficulty: number){
+    const res: questionDataFeedback[] = []
+    for(var i=0;i<data.length;++i){
+        if(data[i].difficulty >= difficulty){
+            res.push(data[i])
+        }
+    }
+    return res
+}
+
+export function memoryToDay(memoryRound: number){
+    if(memoryRound === 0)return 1
+    else if(memoryRound === 1)return 2
+    else if(memoryRound === 2)return 4
+    else if(memoryRound === 3)return 7
+    else if(memoryRound === 4)return 15
+    else return Infinity
+}

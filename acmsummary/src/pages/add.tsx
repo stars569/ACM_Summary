@@ -15,8 +15,6 @@ export default function AddPage(){
 
     const notify = new Notyf()
 
-    const navigate = useNavigate()
-
     const auth = useAuth()
 
     const [historyData, setHistoryData] = useState<questionDataFeedback[] | undefined>(undefined)
@@ -55,9 +53,12 @@ export default function AddPage(){
             notify.error('获取用户信息失败')
             return
         }
+        //不知道为什么取数据拿到的天数减了一
+        const newDate = new Date(formdata?.solveTime)
+        newDate.setDate(newDate.getDate() + 1)
         const formattedData = {
             ...formdata,
-            solveTime: formdata?.solveTime.$d,
+            solveTime: newDate,
             userId: auth.user.userId
         }
         try{
@@ -124,11 +125,12 @@ export default function AddPage(){
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
+
                     <Form.Item
-                    name="title"
-                    rules={[{ required: true, message: '请输入题目标题!' }]}
+                    label="resource"
+                    name = "resource"
                     >
-                    <Input placeholder='题目标题'/>
+                    <Input placeholder='请输入题目来源(CF1000A/P1000/arc100_a)'></Input>
                     </Form.Item>
 
                     <Form.Item
@@ -234,10 +236,10 @@ export default function AddPage(){
                     renderItem={(item, index) => (
                     <List.Item>
                         <List.Item.Meta
-                        title={<a href="https://oi-wiki.org/">{strExtract(item.type)}</a>}
-                        description={item.title}
+                        title={item.resource}
+                        description={<a href="https://oi-wiki.org/">{strExtract(item.type)}</a>}
                         />
-                        <div>难度:{item.difficulty}</div>
+                        <div className='p-2'>难度:{item.difficulty}</div>
                         <Button className='active:bg-blue-800' onClick={() => deleteQuestion(item.id)}>删除</Button>
                     </List.Item>
                     )}

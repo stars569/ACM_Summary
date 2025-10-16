@@ -1,6 +1,7 @@
 export type User = {
     username: string
-    userId: number
+    userId: number,
+    difficulty: number
 }
 
 export type loginUser = {
@@ -18,7 +19,7 @@ export type AuthInfo = {
     user: User | null,
     token: string | null,
     isAuthorized: boolean,
-    loginFunction: (username:string, userId:number, newtoken:string) => void,
+    loginFunction: (username:string, userId:number, difficulty:number, newtoken:string) => void,
     logoutFunction: () => void
 }
 
@@ -31,32 +32,31 @@ export type SideBarProp = {
     setOpen: (open : boolean) => void
 }
 
-export type DateStr = {
-    $d: string
-}
-
 export type questionInfo = {
     type: string,
     difficulty: number,
-    title: string,
-    solveTime: DateStr
+    solveTime: Date,
+    resource: string
 }
 
 export type questionInfoSubmit = {
     type: string,
     difficulty: number,
-    title: string,
-    solveTime: string,
-    userId: number
+    solveTime: Date,
+    userId: number,
+    resource: string
 }
 
 export type questionDataFeedback = {
     id: number,
     type: string,
     difficulty: number,
-    title: string,
     solvetime: string,
-    uploadtime: string
+    uploadtime: string,
+    resource: string,
+    lastdone: Date,
+    memoryround: number,
+    comment: string
 }
 
 export type linearChartDataType = {
@@ -73,4 +73,8 @@ export type linearChartData = {
 export type changePasswordData = {
     oldPassword: string,
     newPassword: string
+}
+
+export type changeDifficulty = {
+    difficulty: number
 }

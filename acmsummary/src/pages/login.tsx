@@ -19,7 +19,7 @@ export default function Login(){
         try{
             const result = await loginAPI(formdata.username, formdata.password)
             notify.success(result.message)
-            auth.loginFunction(result.user.username, result.user.userId, result.token)
+            auth.loginFunction(result.user.username, result.user.userId, result.user.difficulty, result.token)
             navigate('/')
         }
         catch(error){

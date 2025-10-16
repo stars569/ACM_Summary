@@ -73,9 +73,29 @@ async function changePasswordAPI(data: changePasswordData, userId: number, token
     }
 }
 
+//更改难度限制api
+async function changeDifficultyAPI(userId: number, difficulty: number, token: string | null){
+    try{
+        const res = await axios.post('http://localhost:8080/server/changeDifficulty', {
+            userId: userId,
+            difficulty: difficulty
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            }
+        })
+        return res.data
+    }
+    catch(error){
+        throw error
+    }
+}
+
 export {
     loginAPI,
     registerAPI,
     deleteUserAPI,
-    changePasswordAPI
+    changePasswordAPI,
+    changeDifficultyAPI
 }

@@ -50,3 +50,58 @@ export async function deleteQuestionAPI(id: number, userId:number, token: string
         throw error
     }
 }
+
+//根据id获取指定题目
+export async function getQuestionByIdAPI(id: number, userId: number, token: string | null){
+    try{
+        const res = await axios.get(`http://localhost:8080/api/questionGet/${id}/${userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            }
+        })
+        return res.data
+    }
+    catch(error){
+        throw error
+    }
+}
+
+//根据id更新题目复习信息
+export async function updateQuestionByIdAPI(id: number, userId: number, token: string | null){
+    try{
+        const res = await axios.post('http://localhost:8080/api/update', {
+            id: id,
+            userId: userId
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            }
+        })
+        return res.data
+    }
+    catch(error){
+        throw error
+    }
+}
+
+//根据id提交评论
+export async function changeCommentAPI(id: number, userId: number, comment: string, token: string | null){
+    try{
+        const res = await axios.post('http://localhost:8080/api/comment', {
+            id: id,
+            userId: userId,
+            comment: comment
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token
+            }
+        })
+        return res.data
+    }
+    catch(error){
+        throw error
+    }
+}

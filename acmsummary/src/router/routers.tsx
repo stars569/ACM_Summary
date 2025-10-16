@@ -5,6 +5,7 @@ import Register from '../pages/register'
 import Protect from '../components/protected'
 import Settings from '../pages/settings'
 import AddPage from '../pages/add'
+import CallBack from '../pages/callBack'
 
 export default createBrowserRouter([
     {
@@ -26,5 +27,9 @@ export default createBrowserRouter([
     {
         path: '/register',
         element: <Register />
+    },
+    {
+        path: '/callBack',
+        element: <Protect><CallBack /></Protect>
     }
 ])

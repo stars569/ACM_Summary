@@ -1,5 +1,5 @@
 import React from 'react'
-import { Home, Bolt, ChevronRight, CirclePlus } from 'lucide-react'
+import { Home, Bolt, ChevronRight, CirclePlus, Album } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { strCombine } from '../utils/strHandle'
 import { SideBarProp } from '../utils/types'
@@ -33,6 +33,11 @@ export default function SideBar(prop:SideBarProp){
             path:'/settings',
             icon:<Bolt />,
             description:'Settings'
+        },
+        {
+            path:'/callBack',
+            icon:<Album />,
+            description:'Callback'
         }
     ]
 

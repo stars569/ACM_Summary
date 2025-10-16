@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useAuth } from '../components/AuthProvide'
-import { deleteUserAPI, changePasswordAPI } from '../apis/users'
+import { deleteUserAPI, changePasswordAPI, changeDifficultyAPI } from '../apis/users'
 import { Notyf } from 'notyf'
 import { AxiosError } from 'axios'
-import { changePasswordData, errorResponse } from '../utils/types'
+import { changeDifficulty, changePasswordData, errorResponse } from '../utils/types'
 import { Form, Input, Button, Card, Modal } from 'antd'
 import { LockOutlined } from '@ant-design/icons';
 
@@ -80,6 +80,35 @@ export default function Settings(){
         }
     }
 
+    async function onChangeFinish(data:changeDifficulty){
+        if(data.difficulty % 100 !== 0 || data.difficulty < 800 || data.difficulty > 3300){
+            notify.error('请输入正确的难度(800-3300)')
+            return 
+        }
+        if(auth.user === null || auth.user.userId === null){
+            notify.error('获取用户信息失败')
+            return
+        }
+        try{
+            const res = await changeDifficultyAPI(auth.user.userId, data.difficulty, auth.token)
+            notify.success(res.message)
+        }
+        catch(error){
+            const tsError = error as AxiosError
+            if(tsError.response){
+                const data = tsError.response.data as errorResponse
+                notify.error(data.message)
+            }
+            else{
+                notify.error('服务器未响应')
+            }
+        }
+    }
+
+    async function onChangeFinishFailed(){
+        notify.error('难度不可为空')
+    }
+
     return (
         <div className="flex space-x-4 bg-gray-50">
             <Modal
@@ -144,6 +173,31 @@ export default function Settings(){
                         </Form>
                     </Card>
                 </div>
+                <Card title='更改难度(在回顾页中仅显示难度高于设定难度的题目)'>
+                <Form
+                    name="change"
+                    labelCol={{ span: 0 }}
+                    wrapperCol={{ span: 24 }}
+                    style={{ maxWidth: 500 }}
+                    initialValues={{ remember: true }}
+                    onFinish={onChangeFinish}
+                    onFinishFailed={onChangeFinishFailed}
+                    autoComplete="off"
+                >
+                    <div className='font-bold pb-4'>当前难度基准线:{auth.user?.difficulty}</div>
+                    <Form.Item
+                    name="difficulty"
+                    rules={[{ required: true, message: '难度不可为空' }]}
+                    >
+                    <Input placeholder='请输入难度'/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Button type="primary" htmlType="submit" className = "active:bg-blue-800 active:scale-90">
+                            更改难度
+                        </Button>
+                    </Form.Item>
+                </Form>
+                </Card>
             </Card>
         </div>
     )

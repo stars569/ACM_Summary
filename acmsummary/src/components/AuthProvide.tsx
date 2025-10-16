@@ -24,11 +24,12 @@ export default function Auth( { children }: { children: ReactNode } ){
     }, [])
 
     //登录函数
-    function loginFunction(username:string, userId:number, newtoken:string){
+    function loginFunction(username: string, userId: number, difficulty: number, newtoken:string){
         try{
             const newuser:User = {
                 username:username,
-                userId:userId
+                userId:userId,
+                difficulty:difficulty
             }
 
             localStorage.setItem('user', JSON.stringify(newuser))

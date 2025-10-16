@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const { router, auth } = require('./router')
 const { initDB, db } = require('./database')
+const { createCipher } = require('node:crypto')
 
 const app = express()
 
@@ -43,6 +44,21 @@ app.get('/api/question/:userId', auth, async (req, res) => {
     }
 })
 
+//获取固定id的题目信息
+app.get('/api/questionGet/:userId/:id', auth, async (req, res) => {
+    try{
+        const result = await db.checkQuestionExistById(req.params.id, req.params.userId)
+        if(result === null){
+            res.status(404).json({ message:'未找到题目' })
+            return
+        }
+        return result
+    }
+    catch(error){
+        res.status(500).json({ message:'数据库未响应' })
+    }
+})
+
 //删除题目信息
 app.delete('/api/delete/:id/:userId', auth, async (req, res) => {
     try{
@@ -50,7 +66,33 @@ app.delete('/api/delete/:id/:userId', auth, async (req, res) => {
         res.status(201).json({ message:'成功删除指定题目', data:result })
     }
     catch(error){
-        console.log(error)
+        res.status(500).json({ message:'数据库未响应' })
+    }
+})
+
+//更新做题记录
+app.post('/api/update', auth, async (req, res) => {
+    try{
+        const question = await db.getQuestionById(req.body.id, req.body.userId)
+        if(question === null){
+            res.status(404).json({ message:'未找到题目数据' })
+        }
+        const newDate = new Date()
+        const result = await db.changeQuestionById(req.body.id, req.body.userId, newDate, question.rows[0].memoryround + 1)
+        res.status(201).json({ message:'成功更新' })
+    }
+    catch(error){
+        res.status(500).json({ message:'数据库未响应' })
+    }
+})
+
+//提交评论
+app.post('/api/comment', auth, async (req, res) => {
+    try{
+        const res = await db.changeCommentById(req.body.id, req.body.userId, req.body.comment)
+        res.status(201).json({ message:'成功上传评论' })
+    }
+    catch(error){
         res.status(500).json({ message:'数据库未响应' })
     }
 })

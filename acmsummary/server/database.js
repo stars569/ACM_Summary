@@ -15,6 +15,7 @@ async function initDB(){
     await pool.query(`
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
+            difficulty INTEGER,
             username VARCHAR(50) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
             role VARCHAR(20) DEFAULT 'user',
@@ -26,8 +27,11 @@ async function initDB(){
         CREATE TABLE IF NOT EXISTS history (
             id SERIAL PRIMARY KEY,
             userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            comment VARCHAR(255),
+            lastDone TIMESTAMP,
+            resource VARCHAR(255),
+            memoryRound INTEGER,
             type VARCHAR(50) NOT NULL,
-            title VARCHAR(255) UNIQUE NOT NULL,
             difficulty INTEGER,
             solveTime TIMESTAMP,
             uploadTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -46,8 +50,8 @@ const db = {
 
     async createUser(username, password, role = 'user'){
         const res = await pool.query(`
-            INSERT INTO users (username, password, role) VALUES ($1, $2, $3)
-        `, [username, password, role])
+            INSERT INTO users (username, password, role, difficulty) VALUES ($1, $2, $3, $4)
+        `, [username, password, role, 800])
         return res.rows[0]
     },
 
@@ -74,14 +78,14 @@ const db = {
 
     async addSolvedQuestion(data){
         const res = await pool.query(`
-            INSERT INTO history (type, title, difficulty, solveTime, userid) VALUES ($1, $2, $3, $4, $5)
-        `, [data.type, data.title, data.difficulty, data.solveTime, data.userId])
+            INSERT INTO history (type, difficulty, solveTime, userid, resource, lastDone, memoryRound, comment) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `, [data.type, data.difficulty, data.solveTime, data.userId, data.resource, data.solveTime, 0, ''])
         return res.rows[0]
     },
 
     async checkQuestionExistById(id, userId){
         const res = await pool.query(`
-            SELECT * FROM history WHERE title = $1 AND userid = $2
+            SELECT * FROM history WHERE id = $1 AND userid = $2
         `, [id, userId])
         return res.rows[0]
     },
@@ -97,6 +101,34 @@ const db = {
         const res = await pool.query(`
             DELETE FROM history WHERE id = $1 AND userid = $2
         `, [id, userId])
+        return res
+    },
+
+    async changeUserDifficulty(userId, newDiff){
+        const res = await pool.query(`
+            UPDATE users SET difficulty = $1 WHERE id = $2
+        `, [newDiff, userId])
+        return res
+    },
+
+    async getQuestionById(id, userId){
+        const res = await pool.query(`
+            SELECT * FROM history WHERE userid = $1 AND id = $2
+        `, [userId, id])
+        return res
+    },
+
+    async changeQuestionById(id, userId, newDoneDate, newMemoryRound){
+        const res = await pool.query(`
+            UPDATE history SET memoryRound = $1, lastDone = $2 WHERE id = $3 AND userid = $4
+        `, [newMemoryRound, newDoneDate, id, userId])
+        return res
+    },
+
+    async changeCommentById(id, userId, newComment){
+        const res = await pool.query(`
+            UPDATE history SET comment = $1 WHERE id = $2 AND userId = $3
+        `, [newComment, id, userId])
         return res
     }
 }

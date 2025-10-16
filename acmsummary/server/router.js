@@ -25,7 +25,8 @@ router.post('/login', async (req, res) => {
 
         const response = {
             username: username,
-            userId: checkUser.id
+            userId: checkUser.id,
+            difficulty: checkUser.difficulty
         }
 
         res.status(200).json({ message:'登录成功', user:response, token:token})
@@ -91,6 +92,16 @@ router.post('/change', auth, async (req, res) => {
     }
     catch(error){
         res.status(500).json({ message:'数据库未响应' })
+    }
+})
+
+router.post('/changeDifficulty', auth, async (req, res) => {
+    try{
+        const result = await db.changeUserDifficulty(req.body.userId, req.body.difficulty)
+        res.status(201).json({ message:'更改成功' })
+    }
+    catch(error){
+        res.status(500).json({ message:'数据库未响应 '})
     }
 })
 
