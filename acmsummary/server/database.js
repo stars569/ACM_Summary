@@ -127,7 +127,7 @@ const db = {
 
     async changeCommentById(id, userId, newComment){
         const res = await pool.query(`
-            UPDATE history SET comment = $1 WHERE id = $2 AND userId = $3
+            UPDATE history SET comment = $1 WHERE id = $2 AND userid = $3
         `, [newComment, id, userId])
         return res
     }

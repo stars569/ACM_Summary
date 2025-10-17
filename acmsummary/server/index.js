@@ -89,7 +89,7 @@ app.post('/api/update', auth, async (req, res) => {
 //提交评论
 app.post('/api/comment', auth, async (req, res) => {
     try{
-        const res = await db.changeCommentById(req.body.id, req.body.userId, req.body.comment)
+        const result = await db.changeCommentById(req.body.id, req.body.userId, req.body.comment)
         res.status(201).json({ message:'成功上传评论' })
     }
     catch(error){

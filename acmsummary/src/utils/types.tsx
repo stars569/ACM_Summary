@@ -78,3 +78,7 @@ export type changePasswordData = {
 export type changeDifficulty = {
     difficulty: number
 }
+
+export type commentType = {
+    comment: string
+}

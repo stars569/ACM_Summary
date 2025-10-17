@@ -30,14 +30,14 @@ export default function SideBar(prop:SideBarProp){
             description:'Add'
         },
         {
-            path:'/settings',
-            icon:<Bolt />,
-            description:'Settings'
-        },
-        {
             path:'/callBack',
             icon:<Album />,
             description:'Callback'
+        },
+        {
+            path:'/settings',
+            icon:<Bolt />,
+            description:'Settings'
         }
     ]
 

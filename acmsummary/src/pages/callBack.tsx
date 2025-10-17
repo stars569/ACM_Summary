@@ -1,9 +1,9 @@
-import { Card, List, Button } from "antd";
+import { Card, List, Button, Modal, Input, Form } from "antd";
 import React, { useState, useEffect } from "react";
-import { getQuestionData, updateQuestionByIdAPI } from "../apis/questions";
+import { changeCommentAPI, getQuestionData, updateQuestionByIdAPI } from "../apis/questions";
 import { useAuth } from "../components/AuthProvide";
 import { Notyf } from "notyf";
-import { errorResponse, questionDataFeedback } from "../utils/types";
+import { commentType, errorResponse, questionDataFeedback } from "../utils/types";
 import { cleanQuestionData, memoryToDay } from "../utils/historyDataHandler";
 import { AxiosError } from "axios";
 import { Check } from "lucide-react";
@@ -17,6 +17,10 @@ export default function CallBack(){
 
     const auth = useAuth()
 
+    const [visible, setVisible] = useState(false)
+
+    const [questionId, setQuestionId] = useState<number>(-1)
+
     async function getQuestions(){
         if(auth.user === null || auth.user.userId === null){
             notify.error('获取用户信息失败')
@@ -24,7 +28,10 @@ export default function CallBack(){
         }
         try{
             const res = await getQuestionData(auth.user.userId, auth.token)
-            setQuestions(cleanQuestionData(res.data.rows, auth.user.difficulty))
+            const cleanedData = cleanQuestionData(res.data.rows, auth.user.difficulty)
+            cleanedData.sort((a, b) => new Date(a.lastdone).getTime() - new Date(b.lastdone).getTime())
+            console.log(cleanedData)
+            setQuestions(cleanedData)
         }
         catch(error){
             const tsError = error as AxiosError
@@ -64,8 +71,69 @@ export default function CallBack(){
         }
     }
 
+    async function handleCommentUpdate(id: number){
+        setVisible(true)
+        setQuestionId(id)
+    }
+
+    async function handleComment(id: number, comment: string){
+        if(auth.user === null || auth.user.userId === null){
+            notify.error('获取用户信息失败')
+            return
+        }
+        try{
+            const res = await changeCommentAPI(id, auth.user.userId, comment, auth.token)
+            notify.success(res.message)
+            getQuestions()
+            setVisible(false)
+        }
+        catch(error){
+            const tsError = error as AxiosError
+            if(tsError.response){
+                const data = tsError.response.data as errorResponse
+                notify.error(data.message)
+            }
+            else{
+                notify.error('获取数据失败')
+            }
+        }
+    }
+
+    function handleCommentFail(){
+        setVisible(false)
+    }
+
+    function onFinish(data: commentType){
+        handleComment(questionId, data.comment)
+    }
+
     return (
         <div>
+            <Modal
+                title="提交评论"
+                closable={{ 'aria-label': 'Custom Close Button' }}
+                open={visible}
+                onCancel={handleCommentFail}
+                footer={null}
+            >
+                <Form
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
+                autoComplete="off"
+                >
+                    <Form.Item
+                    label="comment"
+                    name="comment"
+                    >
+                    <Input placeholder="请输入评论"/>
+                    </Form.Item>
+                    <Form.Item label={null} className='text-center'>
+                    <Button type="primary" htmlType="submit">
+                        提交
+                    </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
             <Card title='回顾做过的题目' extra='点击题目标题跳转,确认未遗忘做法则点击按钮,也可以对题目作评论'>
             <List
                 itemLayout="horizontal"
@@ -82,8 +150,9 @@ export default function CallBack(){
                         title={<div>
                             <a href={generateURL(item.resource)}>{item.resource}</a>
                         </div>}
-                        description={item.type}
+                        description={item.comment === '' ? '还未上传评论' : item.comment}
                         />
+                        <Button onClick={() => handleCommentUpdate(item.id)}>评论该题目</Button>
                         <Button icon={<Check />} className='bg-green-500' onClick={() => handleUpdateQuestion(item.id)}></Button>
                         </List.Item>
                     )
@@ -94,8 +163,9 @@ export default function CallBack(){
                             <a href={generateURL(item.resource)} target="_blank">{item.resource}</a>
                             <div className="text-sm text-red-400">复习超时,上次复习于:{item.lastdone.toString().slice(0, 10)}</div>
                         </div>}
-                        description={item.type}
+                        description={item.comment === '' ? '还未上传评论' : item.comment}
                         />
+                        <Button onClick={() => handleCommentUpdate(item.id)}>评论该题目</Button>
                         <Button icon={<Check />} className='bg-green-500' onClick={() => handleUpdateQuestion(item.id)}></Button>
                         </List.Item>
                     )
